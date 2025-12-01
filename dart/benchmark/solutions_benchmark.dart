@@ -1,0 +1,74 @@
+import 'package:benchmark_harness/benchmark_harness.dart';
+
+import '../solutions/index.dart';
+import '../utils/index.dart';
+
+enum Part {
+  one,
+  two;
+
+  @override
+  String toString() {
+    return switch (this) {
+      Part.one => 'Part 1',
+      Part.two => 'Part 2',
+    };
+  }
+}
+
+// Create a new benchmark by extending BenchmarkBase
+class SolutionsBenchmark extends BenchmarkBase {
+  SolutionsBenchmark({required GenericDay day, required Part part})
+    : _solve = switch (part) {
+        Part.one => day.solvePart1,
+        Part.two => day.solvePart2,
+      },
+      super('Solutions Day ${day.day} $part');
+
+  final void Function() _solve;
+
+  // The benchmark code.
+  @override
+  void run() {
+    _solve();
+  }
+}
+
+void runBenchmark(List<GenericDay> days) {
+  for (final day in days) {
+    day.printSolutions();
+    SolutionsBenchmark(day: day, part: Part.one).report();
+    SolutionsBenchmark(day: day, part: Part.two).report();
+  }
+}
+
+void main() {
+  final days = <GenericDay>[
+    Day01(),
+    // Day02(),
+    // Day03(),
+    // Day04(),
+    // Day05(),
+    // Day06(),
+    // Day07(),
+    // Day08(),
+    // Day09(),
+    // Day10(),
+    // Day11(),
+    // Day12(),
+    // Day13(),
+    // Day14(),
+    // Day15(),
+    // Day16(),
+    // Day17(),
+    // Day18(),
+    // Day19(),
+    // Day20(),
+    // Day21(),
+    // Day22(),
+    // Day23(),
+    // Day24(),
+    // Day25(),
+  ];
+  runBenchmark(days);
+}
