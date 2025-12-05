@@ -145,7 +145,7 @@ class Day$dayNumber extends GenericDay {
 String _testTemplate(String day) {
   return '''
 // Puzzle Solutions are null before they are solved and we can skip the tests
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: dead_code, unnecessary_null_comparison, unnecessary_ignore
 
 import 'package:test/test.dart';
 

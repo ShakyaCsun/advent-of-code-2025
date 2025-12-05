@@ -2,7 +2,7 @@ import 'solutions/index.dart';
 import 'tool/generic_day.dart';
 
 /// List holding all the solution classes.
-final days = <GenericDay>[Day00(), Day01(), Day02(), Day03(), Day04()];
+final days = <GenericDay>[Day00(), Day01(), Day02(), Day03(), Day04(), Day05()];
 
 void main(List<String?> args) {
   var onlyShowLast = true;
