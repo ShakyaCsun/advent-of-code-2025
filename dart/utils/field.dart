@@ -11,7 +11,7 @@ class Field<T> {
       assert(field[0].isNotEmpty, 'First position must not be empty'),
       // creates a deep copy by value from given field to prevent unwarranted
       // overrides
-      field = List<List<T>>.generate(
+      rows = List<List<T>>.generate(
         field.length,
         (y) => List<T>.generate(
           field[0].length,
@@ -23,14 +23,17 @@ class Field<T> {
       height = field.length,
       width = field[0].length;
 
-  final List<List<T>> field;
+  final List<List<T>> rows;
+  List<List<T>> get columns => List.generate(rows[0].length, (columnIndex) {
+    return List<T>.generate(rows.length, (index) => rows[index][columnIndex]);
+  });
   final int height;
   final int width;
 
   /// Returns the value at the given position.
   T getValueAtPosition(Position position) {
     final (x, y) = position;
-    return field[y][x];
+    return rows[y][x];
   }
 
   /// Returns the value at the given coordinates.
@@ -39,7 +42,7 @@ class Field<T> {
   /// Sets the value at the given Position.
   void setValueAtPosition(Position position, T value) {
     final (x, y) = position;
-    field[y][x] = value;
+    rows[y][x] = value;
   }
 
   /// Sets the value at the given coordinates.
@@ -52,16 +55,16 @@ class Field<T> {
   }
 
   /// Returns the whole row with given row index.
-  Iterable<T> getRow(int row) => field[row];
+  Iterable<T> getRow(int row) => rows[row];
 
   /// Returns the whole column with given column index.
-  Iterable<T> getColumn(int column) => field.map((row) => row[column]);
+  Iterable<T> getColumn(int column) => rows.map((row) => row[column]);
 
   /// Returns the minimum value in this field.
-  T get minValue => min<T>(field.expand((element) => element))!;
+  T get minValue => min<T>(rows.expand((element) => element))!;
 
   /// Returns the maximum value in this field.
-  T get maxValue => max<T>(field.expand((element) => element))!;
+  T get maxValue => max<T>(rows.expand((element) => element))!;
 
   /// Executes the given callback for every position on this field.
   void forEach(VoidFieldCallback callback) {
@@ -73,7 +76,7 @@ class Field<T> {
   }
 
   /// Returns the number of occurrences of given object in this field.
-  int count(T searched) => field
+  int count(T searched) => rows
       .expand((element) => element)
       .fold<int>(0, (acc, elem) => elem == searched ? acc + 1 : acc);
 
@@ -85,7 +88,7 @@ class Field<T> {
   }
 
   Iterable<Position> get allPositions {
-    return field.indexed.expand((indexedRow) {
+    return rows.indexed.expand((indexedRow) {
       final (y, row) = indexedRow;
       return row.indexed.map((indexedValue) {
         final (x, _) = indexedValue;
@@ -125,13 +128,13 @@ class Field<T> {
 
   /// Returns a deep copy by value of this [Field].
   Field<T> copy() {
-    return Field<T>(field);
+    return Field<T>(rows);
   }
 
   @override
   String toString() {
     final result = StringBuffer();
-    for (final row in field) {
+    for (final row in rows) {
       for (final elem in row) {
         result.write(elem.toString());
       }

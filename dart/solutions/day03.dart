@@ -10,14 +10,14 @@ class Day03 extends GenericDay {
 
   @override
   int solvePart1() {
-    return parseInput().field.fold(0, (previousValue, element) {
+    return parseInput().rows.fold(0, (previousValue, element) {
       return previousValue + element.largestJoltagePartOne;
     });
   }
 
   @override
   int solvePart2() {
-    return parseInput().field.fold(0, (previousValue, element) {
+    return parseInput().rows.fold(0, (previousValue, element) {
       return previousValue + element.largestJoltage();
     });
   }
