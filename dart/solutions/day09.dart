@@ -50,66 +50,69 @@ class Day09 extends GenericDay {
 
     for (final MapEntry(key: (p1, p2), value: area)
         in areas.entries
-            /// Hard-coded points hack by looking at input file to quicken the
-            /// bruteforce process:
-            /// ```text
-            /// 2182,50269
-            /// 94634,50269
-            /// 94634,48484
-            /// 1719,48484
-            /// ```
-            /// Around the middle of your input, there will be a similar pattern
-            /// as seen above where small 4-digit 'x' will jump to >90_000 'x'
-            /// and come back down to 4-digits.
-            ///
-            /// WARNING: It takes around 5-6 minutes without this where clause
-            /// tuned to the input file
-            .where((element) {
-              final (p1, p2) = element.key;
-              return p1 == (94634, 50269) ||
-                  p1 == (94634, 48484) ||
-                  p2 == (94634, 50269) ||
-                  p2 == (94634, 48484);
-            })
-            .sorted((a, b) => b.value.compareTo(a.value))) {
+        /// Hard-coded points hack by looking at input file to quicken the
+        /// bruteforce process:
+        /// ```text
+        /// 2182,50269
+        /// 94634,50269
+        /// 94634,48484
+        /// 1719,48484
+        /// ```
+        /// Around the middle of your input, there will be a similar pattern
+        /// as seen above where small 4-digit 'x' will jump to >90_000 'x'
+        /// and come back down to 4-digits.
+        ///
+        /// NOTE: Generalized solution takes ~485ms while hacky solution
+        /// takes ~300ms after some optimizations so the where hack is
+        /// disabled.
+        // .where((element) {
+        //   final (p1, p2) = element.key;
+        //   return p1 == (94634, 50269) ||
+        //       p1 == (94634, 48484) ||
+        //       p2 == (94634, 50269) ||
+        //       p2 == (94634, 48484);
+        // })
+        .sorted((a, b) => b.value.compareTo(a.value))) {
       final [minX, maxX] = [p1.x, p2.x]..sort();
       final [minY, maxY] = [p1.y, p2.y]..sort();
 
       // Do the horizontal sides pass through any vertical edges of the polygon?
-      if (verticalEdges.any((element) {
-        final ((x1, y1), (x2, y2)) = element;
-        for (var x = minX + 1; x < maxX; x++) {
-          // vertical edges have same x
-          if (x1 == x) {
+      if (verticalEdges
+          .where((element) {
+            // vertical edges have same x
+            final x = element.$1.x;
+            return minX < x && x < maxX;
+          })
+          .any((element) {
+            final ((x1, y1), (x2, y2)) = element;
             if (y1 <= minY && y2 >= minY) {
               return true;
             }
             if (y1 <= maxY && y2 >= maxY) {
               return true;
             }
-          }
-        }
-        return false;
-      })) {
+            return false;
+          })) {
         continue;
       }
 
       // Do the vertical sides pass through any horizontal edges of the polygon?
-      if (horizontalEdges.any((element) {
-        final ((x1, y1), (x2, y2)) = element;
-        for (var y = minY + 1; y < maxY; y++) {
-          // horizontal edges have same y
-          if (y1 == y) {
+      if (horizontalEdges
+          .where((element) {
+            // horizontal edges have same y
+            final y = element.$1.y;
+            return minY < y && y < maxY;
+          })
+          .any((element) {
+            final ((x1, y1), (x2, y2)) = element;
             if (x1 <= minX && x2 >= minX) {
               return true;
             }
             if (x1 <= maxX && x2 >= maxX) {
               return true;
             }
-          }
-        }
-        return false;
-      })) {
+            return false;
+          })) {
         continue;
       }
       // print('$p1 * $p2 = $area');
