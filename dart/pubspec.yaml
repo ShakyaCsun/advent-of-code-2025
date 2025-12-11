@@ -7,6 +7,7 @@ environment:
 dependencies:
   collection: ^1.19.1
   equatable: ^2.0.7
+  graphs: ^2.3.2
   meta: ^1.17.0
   quiver: ^3.2.2
   timing: ^1.0.2
