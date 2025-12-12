@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 import 'index.dart';
 
 typedef VoidFieldCallback = void Function(int, int);
 
 /// A helper class for easier work with 2D data.
-class Field<T> {
+class Field<T> extends Equatable {
   Field(List<List<T>> field)
     : assert(field.isNotEmpty, 'Field must not be empty'),
       assert(field[0].isNotEmpty, 'First position must not be empty'),
@@ -126,6 +128,33 @@ class Field<T> {
     });
   }
 
+  Set<Field<T>> allRotationsAndFlips() {
+    List<Field<T>> flip(Field<T> field) {
+      return [
+        Field([...field.rows.reversed]),
+        Field([...field.columns.reversed]),
+      ];
+    }
+
+    final [flipRow, flipColumn] = flip(this);
+    final transpose = Field(columns);
+    final rotate90 = Field(flipRow.columns);
+    final rotate180 = Field([...flipRow.columns.reversed]);
+    final rotate270 = Field([...transpose.rows.reversed]);
+    return {
+      flipRow,
+      flipColumn,
+      rotate90,
+      ...flip(rotate90),
+      rotate180,
+      ...flip(rotate180),
+      rotate270,
+      ...flip(rotate270),
+      transpose,
+      ...flip(transpose),
+    };
+  }
+
   /// Returns a deep copy by value of this [Field].
   Field<T> copy() {
     return Field<T>(rows);
@@ -142,6 +171,9 @@ class Field<T> {
     }
     return result.toString();
   }
+
+  @override
+  List<Object> get props => [rows];
 }
 
 /// Extension for [Field]s where `T` is of type [int].
